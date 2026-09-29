@@ -1,5 +1,6 @@
 # ignor
 .env
+table_error_handling.py
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

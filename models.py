@@ -11,7 +11,8 @@ class User(Base):
     email = Column(String, nullable=False, unique=True)
     hashed_password = Column(String, nullable=False)
 
-class FamilyMemberType(str, enum.Enum):   # Erbt string und enum.Enum. Verhindert, dass der type in familymembers anders ist als child, adult, pet
+class FamilyMemberType(str, enum.Enum):   # Inherits from string and enum.Enum ensures that the type in familymembers is one of child, adult, pet
+
     child = "child"
     adult = "adult"
     pet = "pet"
@@ -57,7 +58,7 @@ class FamilymemberEvent(Base):
     event_id = Column(Integer, ForeignKey('events.id', ondelete='CASCADE'), primary_key=True)
 
 class FamilymemberDoctor(Base):
-    __tablename__ = "familymeber_doctors"
+    __tablename__ = "familymember_doctors"
 
     familymember_id = Column(Integer, ForeignKey('familymembers.id', ondelete='CASCADE'), primary_key=True)
     doctor_id = Column(Integer, ForeignKey('doctors.id', ondelete='CASCADE'), primary_key=True)
