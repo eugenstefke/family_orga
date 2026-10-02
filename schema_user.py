@@ -32,3 +32,8 @@ class UserOut(BaseModel):
 
     model_config = ConfigDict(from_attributes=True) # populate_by_name=True can be passed as an argument if you wish to create a UserOut.name manually (for testing); otherwise, it is not necessary
 
+
+# Request-Modell: Input of registration
+class UserLogin(BaseModel):
+    email: EmailStr
+    password: str

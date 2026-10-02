@@ -11,6 +11,8 @@ class User(Base):
     email = Column(String, nullable=False, unique=True)
     hashed_password = Column(String, nullable=False)
 
+    family_members = relationship("FamilyMember", back_populates="owner")
+
 class FamilyMemberType(str, enum.Enum):   # Inherits from string and enum.Enum ensures that the type in familymembers is one of child, adult, pet
 
     child = "child"
@@ -29,6 +31,9 @@ class FamilyMember(Base):
     allergies = Column(String)
     clothing_size = Column(String, nullable=True)
     shoe_size = Column(Float, nullable=True)
+    owner_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
+
+    owner = relationship("User", back_populates="family_members")
     events = relationship("Event", secondary="familymember_events", back_populates="family_members")
     doctors = relationship("Doctor", secondary="familymember_doctors", back_populates="family_members")
 
