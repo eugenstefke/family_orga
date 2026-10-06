@@ -1,5 +1,5 @@
 from sqlalchemy import create_engine
-from sqlalchemy.orm import declarative_base, sessionmaker
+from sqlalchemy.orm import DeclarativeBase, sessionmaker
 import os
 from dotenv import load_dotenv
 
@@ -13,4 +13,12 @@ engine = create_engine(DATABASE_URL)
 Session = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 # Basisklasse für die Tabellenklasse(n) definieren
-Base = declarative_base()
+class Base (DeclarativeBase):
+    pass
+
+def get_db():
+    db = Session()
+    try:
+        yield db
+    finally:
+        db.close()
