@@ -12,6 +12,8 @@ class User(Base):
     hashed_password = Column(String, nullable=False)
 
     family_members = relationship("FamilyMember", back_populates="owner")
+    events = relationship("Event", back_populates="owner")
+    doctors = relationship("Doctor", back_populates="owner")
 
 class FamilyMemberType(str, enum.Enum):   # Inherits from string and enum.Enum ensures that the type in familymembers is one of child, adult, pet
 
@@ -45,6 +47,9 @@ class Event(Base):
     date_time = Column(DateTime, nullable=False)
     location = Column(String, nullable=False)
     category = Column(String)
+    owner_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
+
+    owner = relationship("User", back_populates="events")
     family_members = relationship("FamilyMember", secondary="familymember_events", back_populates="events")
 
 class Doctor(Base):
@@ -54,6 +59,9 @@ class Doctor(Base):
     name = Column(String, nullable=False)
     field_of_study = Column(String, nullable=False)
     contact_details = Column(String, nullable=False)
+    owner_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
+
+    owner = relationship("User", back_populates="doctors")
     family_members = relationship("FamilyMember", secondary="familymember_doctors", back_populates="doctors")
 
 class FamilymemberEvent(Base):
