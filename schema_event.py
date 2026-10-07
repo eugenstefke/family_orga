@@ -10,7 +10,7 @@ class EventCreate(BaseModel):
     category: Optional[str] = None
     familymember_id: list[int]
 
-#Output after Creat Event
+#Output after Create Event
 class EventOut(BaseModel):
 
     message: str
@@ -23,6 +23,13 @@ class AllEventsOut(BaseModel):
     date_time: datetime
     location: str
     category: Optional[str] = None
+
+    model_config = ConfigDict(from_attributes=True)
+
+# Mini familymember details to make the class EventDetail output clearer
+class FamilyMemberMiniDetails(BaseModel):
+    id: int
+    name: str
 
     model_config = ConfigDict(from_attributes=True)
 
@@ -47,9 +54,3 @@ class EventDelete(BaseModel):
 
     message: str
 
-# Mini familymember details to make the class EventDetail output clearer
-class FamilyMemberMiniDetails(BaseModel):
-    id: int
-    name: str
-
-    model_config = ConfigDict(from_attributes=True)

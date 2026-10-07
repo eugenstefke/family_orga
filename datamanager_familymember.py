@@ -40,24 +40,24 @@ class DataManagerFamilyMember:
 
         return None, familymember
 
-    def update_familymember_details(self, familymember_id: int, current_user: User, familymember: FamilyMemberCreate, db: Session):
+    def update_familymember_details(self, familymember_id: int, current_user: User, familymember_update: FamilyMemberCreate, db: Session):
 
-        update_familymember = db.query(FamilyMember).filter_by(owner_id=current_user.id, id=familymember_id).first()
+        familymember = db.query(FamilyMember).filter_by(owner_id=current_user.id, id=familymember_id).first()
 
         if not familymember:
             return "Familymember not found", None
 
-        update_familymember.name = familymember.name
-        update_familymember.birthday = familymember.birthday
-        update_familymember.height = familymember.height
-        update_familymember.weight = familymember.weight
-        update_familymember.type = familymember.type
-        update_familymember.allergies = familymember.allergies
-        update_familymember.clothing_size = familymember.clothing_size
-        update_familymember.shoe_size = familymember.shoe_size
+        familymember.name = familymember_update.name
+        familymember.birthday = familymember_update.birthday
+        familymember.height = familymember_update.height
+        familymember.weight = familymember_update.weight
+        familymember.type = familymember_update.type
+        familymember.allergies = familymember_update.allergies
+        familymember.clothing_size = familymember_update.clothing_size
+        familymember.shoe_size = familymember_update.shoe_size
 
         db.commit()
-        return None, update_familymember
+        return None, familymember
 
     def delete_familymember(self, familymember_id: int, current_user: User, db: Session):
 

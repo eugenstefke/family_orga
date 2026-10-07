@@ -6,6 +6,8 @@ from schema_event import EventCreate, EventOut, EventDetail, AllEventsOut, Event
 from datamanager_familymember import DataManagerFamilyMember
 from datamanager_user import DataManagerUser
 from datamanager_event import DataManagerEvent
+from datamanager_doctor import DataManagerDoctor
+from schema_doctor import DoctorCreate, DoctorOut, DoctorDetail, AllDoctorsOut, DoctorUpdate, DoctorDelete
 from models import User
 from database import get_db
 import uvicorn
@@ -119,17 +121,42 @@ def delete_event(event_id: int, current_user: User = Depends(get_current_user),d
 
     return EventDelete(message=f"{event} is no longer in your list")
 
+@app.get("/doctor/{doctor_id}", response_model=DoctorDetail)
+def read_doctor_details(doctor_id: int, current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
+    message, doctor_details = DataManagerDoctor().get_doctor_details(doctor_id, current_user, db)
+    if message:
+        raise HTTPException(status_code=404, detail=message)
+    return doctor_details
 
+@app.get("/get/all/doctors", response_model=list[AllDoctorsOut])
+def read_doctors(current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
+    doctors = DataManagerDoctor().get_doctors(current_user, db)
+    return doctors
 
+@app.post("/doctor/add", response_model=DoctorOut)
+def add_doctor(doctor_details: DoctorCreate, current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
+    message, doctor = DataManagerDoctor().add_new_doctor(doctor_details, current_user, db)
+    if message:
+        raise HTTPException(status_code=400, detail=message)
 
+    return doctor
 
+@app.put("/doctor/{doctor_id}", response_model=DoctorUpdate)
+def update_doctor(doctor_id: int, doctor: DoctorCreate, current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
+    message, doctor = DataManagerDoctor().update_doctor(doctor_id, current_user, doctor, db)
+    if message:
+        raise HTTPException(status_code=400, detail=message)
+    return DoctorUpdate(message=f"Details change of Doctor {doctor.name} was successfull")
 
+@app.delete("/doctor/{doctor_id}", response_model=DoctorDelete)
+def delete_doctor(doctor_id: int, current_user: User = Depends(get_current_user),db: Session = Depends(get_db)):
 
+    message, doctor = DataManagerDoctor().delete_doctor(doctor_id, current_user, db)
 
+    if message:
+        raise HTTPException(status_code=400, detail=message)
 
-
-
-
+    return DoctorDelete(message=f"{doctor} is no longer in your list")
 
 if __name__ == '__main__':
     uvicorn.run(app, host="127.0.0.1", port=8000)

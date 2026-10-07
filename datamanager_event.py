@@ -49,32 +49,31 @@ class DataManagerEvent:
         events = db.query(Event).filter_by(owner_id=current_user.id).all()
         return events
 
-    def update_event(self, event_id: int, current_user: User, event: EventCreate, db: Session):
+    def update_event(self, event_id: int, current_user: User, event_update: EventCreate, db: Session):
 
-        new_event = db.query(Event).filter_by(owner_id=current_user.id, id=event_id).first()
+        event = db.query(Event).filter_by(owner_id=current_user.id, id=event_id).first()
 
-        if not new_event:
+        if not event:
             return "Event not found", None
 
-        valid_family_members = db.query(FamilyMember).filter(FamilyMember.id.in_(event.familymember_id),
-                                                             FamilyMember.owner_id == current_user.id).all()
+        valid_family_members = db.query(FamilyMember).filter(FamilyMember.id.in_(event_update.familymember_id), FamilyMember.owner_id == current_user.id).all()
 
         valid_ids = {familymember.id for familymember in valid_family_members}
-        for familymember_id in event.familymember_id:
+        for familymember_id in event_update.familymember_id:
             if familymember_id not in valid_ids:
                 return f"Invalid familymember id: {familymember_id}", None
 
-        new_event.title = event.title
-        new_event.date_time = event.date_time
-        new_event.location = event.location
-        new_event.category = event.category
+        event.title = event_update.title
+        event.date_time = event_update.date_time
+        event.location = event_update.location
+        event.category = event_update.category
 
         db.query(FamilymemberEvent).filter_by(event_id=event_id).delete()  # alte Zuordnungen entfernen
-        for familymember_id in event.familymember_id:
+        for familymember_id in event_update.familymember_id:
             db.add(FamilymemberEvent(familymember_id=familymember_id, event_id=event_id))
 
         db.commit()
-        return None, new_event
+        return None, event
 
     def delete_event(self, event_id: int, current_user: User, db: Session):
 
