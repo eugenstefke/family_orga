@@ -1,15 +1,12 @@
 from sqlalchemy.orm import Session
-from fastapi import FastAPI, HTTPException, Depends, APIRouter
-from schema_doctor import DoctorCreate, DoctorOut, DoctorDetail, AllDoctorsOut, DoctorUpdate, DoctorDelete
+from fastapi import HTTPException, Depends, APIRouter
+from services.schema_doctor import DoctorCreate, DoctorOut, DoctorDetail, AllDoctorsOut, DoctorUpdate, DoctorDelete
 from models.models import User
-from database import get_db
+from data.database import get_db
 from auth.auth_users import get_current_user
 from repositories.doctor_repository_sqlalchemy import DoctorRepositorySqlalchemy
 from services.doctor_service import DoctorServie
-
 router = APIRouter()
-
-######### Neu ##########
 
 @router.post("/doctor/add", response_model=DoctorOut)
 def add_doctor(doctor_details: DoctorCreate, current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):

@@ -5,7 +5,7 @@ from models.models import User
 
 class UserRepositorySqlalchemy(IUserRepository):
 
-    def  __init__ (self, session: Session ):
+    def  __init__ (self, session: Session):
         self.db = session
 
     def get_by_email(self, email):

@@ -1,4 +1,3 @@
-from database import Base, engine
-import models
+from data.database import Base, engine
 
 Base.metadata.create_all(engine)

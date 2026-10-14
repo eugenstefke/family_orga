@@ -1,6 +1,6 @@
 from models.models import User
 from pwdlib import PasswordHash
-from schema_user import UserCreate, UserLogin, UserUpdate, UserDelete
+from schemas.schema_user import UserCreate, UserLogin, UserUpdate, UserDelete
 from repositories.user_repository import IUserRepository
 
 password_hash = PasswordHash.recommended()

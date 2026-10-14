@@ -1,15 +1,12 @@
-from schema_user import UserCreate, UserOut, UserLogin, UserOutUpdate, UserUpdate, UserOutDelete, UserDelete
+from schemas.schema_user import UserCreate, UserOut, UserLogin, UserOutUpdate, UserUpdate, UserOutDelete, UserDelete
 from sqlalchemy.orm import Session
 from fastapi import  HTTPException, Depends, APIRouter
-from database import get_db
+from data.database import get_db
 from auth.auth_users import create_access_token, get_current_user
 from models.models import User
 from repositories.user_repository_sqlalchemy import UserRepositorySqlalchemy
 from services.user_service import UserService
-
 router = APIRouter()
-
-##### Neu #####
 
 @router.post("/user/registration", response_model=UserOut) #response_model=UserOut tells FastAPI to format the response as in UserOut before sending it to the client
 def create_user(user: UserCreate, db: Session = Depends(get_db)): #user: UserCreate checks the client’s input; if the input does not match the UserCreate schema, it is automatically rejected; if everything matches, the user is passed as an argument to the UserCreate object

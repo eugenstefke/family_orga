@@ -1,4 +1,4 @@
-from schema_event import EventCreate
+from schemas.schema_event import EventCreate
 from models import User, Event, FamilymemberEvent, FamilyMember
 from sqlalchemy.orm import Session
 

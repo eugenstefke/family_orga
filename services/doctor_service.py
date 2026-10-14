@@ -1,5 +1,5 @@
 from repositories.doctor_repository import IDoctorRepository
-from schema_doctor import DoctorCreate
+from services.schema_doctor import DoctorCreate
 from models.models import User, Doctor
 
 class DoctorServie:
@@ -65,7 +65,7 @@ class DoctorServie:
         doctor.field_of_study = doctor_details.field_of_study
         doctor.contact_details = doctor_details.contact_details
 
-        self.repository.delete_linking(doctor_id=doctor_id) # alte Zuordnungen von Verknüpfungstabelle entfernen
+        self.repository.delete_linking(doctor_id=doctor_id) # Remove old mappings from the join table
         for familymember_id in doctor_details.familymember_id:
             self.repository.add_linking(familymember_id=familymember_id, doctor_id=doctor_id)
 

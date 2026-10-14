@@ -1,4 +1,3 @@
-from database import Base, engine
-import models # wichtig: die Models müssen importiert sein, damit Base sie kennt
+from data.database import Base, engine
 
 Base.metadata.create_all(engine)

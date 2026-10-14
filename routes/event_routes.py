@@ -1,10 +1,10 @@
 from auth.auth_users import get_current_user
 from fastapi import FastAPI, HTTPException, Depends
 from sqlalchemy.orm import Session
-from schema_event import EventCreate, EventOut, EventDetail, AllEventsOut, EventUpdate, EventDelete
+from schemas.schema_event import EventCreate, EventOut, EventDetail, AllEventsOut, EventUpdate, EventDelete
 from datamanager_event import DataManagerEvent
 from models.models import User
-from database import get_db
+from data.database import get_db
 app = FastAPI()
 
 @app.get("/event/{event_id}", response_model=EventDetail)

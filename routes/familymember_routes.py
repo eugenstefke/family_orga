@@ -1,42 +1,57 @@
 from models.models import User
-from fastapi import FastAPI, HTTPException, Depends
+from fastapi import HTTPException, Depends, APIRouter
 from sqlalchemy.orm import Session
-from schema_familymember import FamilyMemberCreate, FamilyMemberOut, FamilyMemberDetail, FamilyMemberUpdate, FamilyMemberDelete
+from schemas.schema_familymember import FamilyMemberCreate, FamilyMemberOut, FamilyMemberDetail, FamilyMemberUpdate, FamilyMemberDelete
 from auth.auth_users import get_current_user
-from datamanager_familymember import DataManagerFamilyMember
-from database import get_db
-app = FastAPI()
+from data.database import get_db
+from repositories.familymember_repository_sqlalchemy import FamilyMemberRepositorySqlalchemy
+from services.familymember_service import FamilyMemberService
 
-@app.get("/get/all/familymembers", response_model=list[FamilyMemberOut])
+router = APIRouter()
+
+@router.get("/get/all/familymembers", response_model=list[FamilyMemberOut])
 def read_familymembers(current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
-    familymembers = DataManagerFamilyMember().get_familymembers(current_user, db)
+    repository = FamilyMemberRepositorySqlalchemy(session=db)
+    service = FamilyMemberService(repository=repository)
+    familymembers = service.get_familymembers(current_user)
 
     return familymembers
 
-@app.get("/familymember/{familymember_id}", response_model=FamilyMemberDetail)
+@router.get("/familymember/{familymember_id}", response_model=FamilyMemberDetail)
 def read_familymember_details(familymember_id: int, current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
-    message, familymember_details = DataManagerFamilyMember().get_familymember_details(current_user, familymember_id, db)
+    repository = FamilyMemberRepositorySqlalchemy(session=db)
+    service = FamilyMemberService(repository=repository)
+    message, familymember_details = service.get_familymember_details(current_user, familymember_id)
+
     if message:
         raise HTTPException(status_code=404, detail=message)
     return familymember_details
 
-@app.post("/familymember/create", response_model=FamilyMemberOut)
+@router.post("/familymember/create", response_model=FamilyMemberOut)
 def create_familymember(familymember: FamilyMemberCreate, current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
-    message, new_familymember = DataManagerFamilyMember().add_familymember(familymember, current_user, db)
+    repository = FamilyMemberRepositorySqlalchemy(session=db)
+    service = FamilyMemberService(repository=repository)
+    message, new_familymember = service.add_familymember(familymember, current_user)
+
     if message:
         raise HTTPException(status_code=400, detail=message)
     return new_familymember
 
-@app.put("/familymember/{familymember_id}", response_model=FamilyMemberUpdate)
+@router.put("/familymember/{familymember_id}", response_model=FamilyMemberUpdate)
 def update_familymember(familymember_id : int, familymember: FamilyMemberCreate, current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
-    message, familymember = DataManagerFamilyMember().update_familymember_details(familymember_id, current_user, familymember, db)
+    repository = FamilyMemberRepositorySqlalchemy(session=db)
+    service = FamilyMemberService(repository=repository)
+    message, familymember = service.update_familymember_details(familymember_id, current_user, familymember)
+
     if message:
         raise HTTPException(status_code=400, detail=message)
     return FamilyMemberUpdate(message=f"Details update of Familymember {familymember.name} successful")
 
-@app.delete("/familymember/{familymember_id}", response_model=FamilyMemberDelete)
+@router.delete("/familymember/{familymember_id}", response_model=FamilyMemberDelete)
 def delete_familymember(familymember_id : int, current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
-    message, familymember = DataManagerFamilyMember().delete_familymember(familymember_id, current_user, db)
+    repository = FamilyMemberRepositorySqlalchemy(session=db)
+    service = FamilyMemberService(repository=repository)
+    message, familymember = service.delete_familymember(familymember_id, current_user)
 
     if message:
         raise HTTPException(status_code=400, detail=message)
