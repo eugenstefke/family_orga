@@ -1,6 +1,6 @@
 from repositories.doctor_repository import IDoctorRepository
 from schema_doctor import DoctorCreate
-from models.models import User, Doctor, FamilymemberDoctor
+from models.models import User, Doctor
 
 class DoctorServie:
 

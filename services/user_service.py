@@ -1,13 +1,19 @@
-from models import User
+from models.models import User
 from pwdlib import PasswordHash
-from schema_user import UserCreate, UserLogin, UserUpdate
-from sqlalchemy.orm import Session
+from schema_user import UserCreate, UserLogin, UserUpdate, UserDelete
+from repositories.user_repository import IUserRepository
 
 password_hash = PasswordHash.recommended()
 
-class DataManagerUser:
-    def add_user(self, user_data: UserCreate, db: Session):
-        existing = db.query(User).filter_by(email=user_data.email).first()
+class UserService:
+
+    def __init__(self, repository: IUserRepository):
+        self.repository = repository
+
+    def add_new_user(self, user_data: UserCreate):
+
+        existing = self.repository.get_by_email(email=user_data.email)
+
         if existing:
             return "This email address is already in use", None
 
@@ -18,13 +24,13 @@ class DataManagerUser:
             email=user_data.email,
             hashed_password=hashed_password
         )
-        db.add(new_user)
-        db.commit()
+        self.repository.add_user(new_user=new_user)
+        self.repository.commit()
         return None, new_user
 
-    def authenticate_user(self, user_login: UserLogin, db: Session):
+    def authenticate_user(self, user_login: UserLogin):
 
-        user = db.query(User).filter_by(email=user_login.email).first()
+        user = self.repository.get_by_email(email=user_login.email)
 
         if not user:
             return "Your email address or password is incorrect", None
@@ -36,7 +42,7 @@ class DataManagerUser:
 
         return None, user
 
-    def details_change(self, update_user_details: UserUpdate, current_user: User, db: Session):
+    def details_change(self, update_user_details: UserUpdate, current_user: User):
 
         password_correct = password_hash.verify(update_user_details.old_password, current_user.hashed_password)
         if not password_correct:
@@ -46,10 +52,10 @@ class DataManagerUser:
         current_user.email=update_user_details.email
         current_user.hashed_password=password_hash.hash(update_user_details.password)
 
-        db.commit()
+        self.repository.commit()
         return None, current_user
 
-    def delete_user(self, user_password, current_user: User, db: Session):
+    def delete_user(self, user_password: UserDelete, current_user: User):
 
         password_correct = password_hash.verify(user_password.password , current_user.hashed_password)
         if not password_correct:
@@ -57,7 +63,7 @@ class DataManagerUser:
 
         delete_name = current_user.user_name
 
-        db.delete(current_user)
-        db.commit()
+        self.repository.delete_user(current_user)
+        self.repository.commit()
 
         return None, delete_name
