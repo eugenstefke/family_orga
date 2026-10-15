@@ -1,4 +1,4 @@
-from user_repository import IUserRepository
+from repositories.user_repository import IUserRepository
 from sqlalchemy.orm import Session
 from models.models import User
 

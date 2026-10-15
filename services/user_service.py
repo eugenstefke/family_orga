@@ -44,6 +44,11 @@ class UserService:
 
     def details_change(self, update_user_details: UserUpdate, current_user: User):
 
+        existing = self.repository.get_by_email(email=update_user_details.email)
+
+        if existing:
+            return "This email address is already in use", None
+
         password_correct = password_hash.verify(update_user_details.old_password, current_user.hashed_password)
         if not password_correct:
             return "Old Password is not correct", None

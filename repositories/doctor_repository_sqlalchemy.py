@@ -12,7 +12,7 @@ class DoctorRepositorySqlalchemy(IDoctorRepository):
             self.db.add(new_doctor)
 
     def add_linking(self, familymember_id, doctor_id):
-        self.db.add(familymember_id, doctor_id)
+        self.db.add(FamilymemberDoctor(familymember_id=familymember_id, doctor_id=doctor_id))
 
     def cache(self):
         self.db.flush()

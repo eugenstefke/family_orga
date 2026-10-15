@@ -1,4 +1,4 @@
-from event_repository import IEventRepository
+from repositories.event_repository import IEventRepository
 from sqlalchemy.orm import Session
 from models.models import Event, FamilymemberEvent, FamilyMember
 

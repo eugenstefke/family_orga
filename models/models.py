@@ -11,9 +11,11 @@ class User(Base):
     email = Column(String, nullable=False, unique=True)
     hashed_password = Column(String, nullable=False)
 
-    family_members = relationship("FamilyMember", back_populates="owner")
-    events = relationship("Event", back_populates="owner")
-    doctors = relationship("Doctor", back_populates="owner")
+    # cascade="all, delete-orphan" -> If the user is deleted, the referenced FamilyMember objects are also deleted, rather than simply setting their foreign key to NULL (set to Null = default behaviour).”
+    # passive_deletes=True -> DB handles the deletion itself (thanks to `ondelete=‘CASCADE’` in the Event/Doctor model)
+    family_members = relationship("FamilyMember", back_populates="owner", cascade="all, delete-orphan", passive_deletes=True)
+    events = relationship("Event", back_populates="owner", cascade="all, delete-orphan", passive_deletes=True)
+    doctors = relationship("Doctor", back_populates="owner", cascade="all, delete-orphan", passive_deletes=True)
 
 class FamilyMemberType(str, enum.Enum):   # Inherits from string and enum.Enum ensures that the type in familymembers is one of child, adult, pet
 

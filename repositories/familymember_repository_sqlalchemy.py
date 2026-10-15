@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Session
-from familymember_repository import IFamilyMemberRepository
+from repositories.familymember_repository import IFamilyMemberRepository
 from models.models import FamilyMember
 
 class FamilyMemberRepositorySqlalchemy(IFamilyMemberRepository):
