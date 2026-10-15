@@ -1,8 +1,8 @@
 from repositories.doctor_repository import IDoctorRepository
-from services.schema_doctor import DoctorCreate
+from schemas.schema_doctor import DoctorCreate
 from models.models import User, Doctor
 
-class DoctorServie:
+class DoctorService:
 
     def __init__(self, repository: IDoctorRepository):
         self.repository = repository
@@ -21,9 +21,9 @@ class DoctorServie:
         # Otherwise, the validation of the family member IDs cannot take place, as there is currently nothing in the database without a flush() (self.repository.cache())
         self.repository.cache()
 
-        valid_family_members = self.repository.validation(doctor_details, current_user)
+        valid_familymembers = self.repository.validation(doctor_details, current_user)
 
-        valid_ids = {familymember.id for familymember in valid_family_members}
+        valid_ids = {familymember.id for familymember in valid_familymembers}
         for familymember_id in doctor_details.familymember_id:
             if familymember_id not in valid_ids:
                 return f"Invalid familymember id: {familymember_id}", None
@@ -54,9 +54,9 @@ class DoctorServie:
         if not doctor:
             return "Doctor not found", None
 
-        valid_family_members = self.repository.validation(doctor_details, current_user)
+        valid_familymembers = self.repository.validation(doctor_details, current_user)
 
-        valid_ids = {familymember.id for familymember in valid_family_members}
+        valid_ids = {familymember.id for familymember in valid_familymembers}
         for familymember_id in doctor_details.familymember_id:
             if familymember_id not in valid_ids:
                 return f"Invalid familymember id: {familymember_id}", None
