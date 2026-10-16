@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 
 class IDoctorRepository(ABC):
+    """Parent class that defines the methods"""
 
     @abstractmethod
     def add_doctor(self, new_doctor):
@@ -11,7 +12,7 @@ class IDoctorRepository(ABC):
         pass
 
     @abstractmethod
-    def cache(self):
+    def flush(self):
         pass
 
     @abstractmethod

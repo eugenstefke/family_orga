@@ -6,19 +6,20 @@ from dotenv import load_dotenv
 load_dotenv()
 DATABASE_URL = os.getenv("DATABASE_URL")
 
-# Datenbankverbindung erstellen
+# Create a database connection
 engine = create_engine(DATABASE_URL)
 
-# Session-Factory erstellen
+# Create a session factory
 Session = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
-# Basisklasse für die Tabellenklasse(n) definieren
+# Define a base class for the table class(es)
 class Base (DeclarativeBase):
     pass
 
 def get_db():
+    """Provide a database session per request and close it afterwards."""
     db = Session()
     try:
-        yield db
-    finally:
+        yield db # the session passes on everything that uses Depends(get_db)
+    finally: # closes the session, regardless of whether it was successful or failed
         db.close()

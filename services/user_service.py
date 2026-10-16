@@ -44,21 +44,21 @@ class UserService:
 
     def details_change(self, update_user_details: UserUpdate, current_user: User):
 
-        existing = self.repository.get_by_email(email=update_user_details.email)
-
-        if existing:
-            return "This email address is already in use", None
-
         password_correct = password_hash.verify(update_user_details.old_password, current_user.hashed_password)
         if not password_correct:
-            return "Old Password is not correct", None
+            return 401, "Old Password is not correct", None
+
+        existing = self.repository.get_by_email(email=update_user_details.email)
+
+        if existing and existing.id != current_user.id:
+            return 409, "This email address is already in use", None
 
         current_user.user_name=update_user_details.name
         current_user.email=update_user_details.email
         current_user.hashed_password=password_hash.hash(update_user_details.password)
 
         self.repository.commit()
-        return None, current_user
+        return None, None, current_user
 
     def delete_user(self, user_password: UserDelete, current_user: User):
 

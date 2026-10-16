@@ -19,7 +19,7 @@ class DoctorService:
         self.repository.add_doctor(new_doctor=new_doctor)
         # ensures that new_doctor is now set to DB.
         # Otherwise, the validation of the family member IDs cannot take place, as there is currently nothing in the database without a flush() (self.repository.cache())
-        self.repository.cache()
+        self.repository.flush()
 
         valid_familymembers = self.repository.validation(doctor_details, current_user)
 
@@ -52,14 +52,14 @@ class DoctorService:
         doctor = self.repository.get_by_id(owner_id=current_user.id, doctor_id=doctor_id)
 
         if not doctor:
-            return "Doctor not found", None
+            return 404, "Doctor not found", None
 
         valid_familymembers = self.repository.validation(doctor_details, current_user)
 
         valid_ids = {familymember.id for familymember in valid_familymembers}
         for familymember_id in doctor_details.familymember_id:
             if familymember_id not in valid_ids:
-                return f"Invalid familymember id: {familymember_id}", None
+                return 400, f"Invalid familymember id: {familymember_id}", None
 
         doctor.name = doctor_details.name
         doctor.field_of_study = doctor_details.field_of_study
@@ -70,7 +70,7 @@ class DoctorService:
             self.repository.add_linking(familymember_id=familymember_id, doctor_id=doctor_id)
 
         self.repository.commit()
-        return None, doctor
+        return None, None, doctor
 
 
     def delete_doctor(self, doctor_id: int, current_user: User):

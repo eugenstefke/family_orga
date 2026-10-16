@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 
 class IUserRepository(ABC):
+    """Parent class that defines the methods"""
 
     @abstractmethod
     def get_by_email(self, email):

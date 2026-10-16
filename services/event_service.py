@@ -53,14 +53,14 @@ class EventService:
         event = self.repository.get_by_id(owner_id=current_user.id, event_id=event_id)
 
         if not event:
-            return "Event not found", None
+            return 404, "Event not found", None
 
         valid_familymembers = self.repository.validation(event_details=event_details, current_user=current_user)
 
         valid_ids = {familymember.id for familymember in valid_familymembers}
         for familymember_id in event_details.familymember_id:
             if familymember_id not in valid_ids:
-                return f"Invalid familymember id: {familymember_id}", None
+                return 400, f"Invalid familymember id: {familymember_id}", None
 
         event.title = event_details.title
         event.date_time = event_details.date_time
@@ -72,7 +72,7 @@ class EventService:
             self.repository.add_linking(familymember_id=familymember_id, event_id=event_id)
 
         self.repository.commit()
-        return None, event
+        return None, None, event
 
     def delete_event(self, event_id: int, current_user: User):
 

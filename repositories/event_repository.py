@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 
 class IEventRepository(ABC):
+    """Parent class that defines the methods"""
 
     @abstractmethod
     def get_by_id(self, owner_id, event_id):

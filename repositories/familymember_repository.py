@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 
 class IFamilyMemberRepository(ABC):
+    """Parent class that defines the methods"""
 
     @abstractmethod
     def get_all(self, owner_id):
