@@ -2,8 +2,16 @@ from datetime import date
 from pydantic import BaseModel, field_validator, Field, ConfigDict
 from typing import Literal, Optional
 
-# Request-Modell: Input of registration a familymember
 class FamilyMemberCreate(BaseModel):
+    """Required details for creating a new familymember.
+
+    The title and weight -> restricted to 0-250 field must not be empty.
+    The birthday must be later than today's date
+    The height field is optional, the default value is None and it is restricted to 0–300.
+    The type can only be child, adult or pet
+    The allergies and clothing size are optional and has default None
+    shoe size are optional default is None restricted to 0-70"""
+
     name: str = Field(min_length=1)
     birthday: date
     height: Optional[int] = Field(default=None, gt=0, lt=300)
@@ -21,9 +29,8 @@ class FamilyMemberCreate(BaseModel):
 
         return value
 
-# Output after Creat
 class FamilyMemberOut(BaseModel):
-
+    """Data of a familymember, returned after the familymember has been created."""
     id: int
     name: str
     birthday: date
@@ -31,8 +38,8 @@ class FamilyMemberOut(BaseModel):
 
     model_config = ConfigDict(from_attributes=True)
 
-#Output for get request
 class FamilyMemberDetail(BaseModel):
+    """Details of a familymember."""
     id: int
     name: str
     birthday: date
@@ -45,12 +52,11 @@ class FamilyMemberDetail(BaseModel):
 
     model_config = ConfigDict(from_attributes=True)
 
-# Output for Update successful
-class FamilyMemberUpdate(BaseModel):
 
+class FamilyMemberUpdate(BaseModel):
+    """Confirmation message returned after a familymember has been updated."""
     message: str
 
-# Output for Delete
 class FamilyMemberDelete(BaseModel):
-
+    """Confirmation message returned after a familymember has been deleted."""
     message: str

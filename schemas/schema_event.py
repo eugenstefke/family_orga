@@ -2,22 +2,28 @@ from datetime import datetime
 from pydantic import BaseModel,  Field, ConfigDict
 from typing import  Optional
 
-#Output for Post request
 class EventCreate(BaseModel):
+    """Required details for creating a new event.
+
+    The title field must not be empty.
+    The date time must be in the format YYYY-MM-DDTHH:MM
+    location has the default value: ‘No location was specified’
+    category is optional
+    familymember_id lists the family members attending the event"""
+
     title: str = Field(min_length=1)
     date_time: datetime = Field(examples=["JJJJ-MM-DDTHH:MM"])
     location: str = "No location was specified"
     category: Optional[str] = None
     familymember_id: list[int]
 
-#Output after Create Event
 class EventOut(BaseModel):
-
+    """Confirmation message returned after creat event."""
     message: str
 
-#Output for get all events
-class AllEventsOut(BaseModel):
 
+class AllEventsOut(BaseModel):
+    """Summary of an event, as displayed in the list of all events."""
     id: int
     title: str
     date_time: datetime
@@ -26,15 +32,17 @@ class AllEventsOut(BaseModel):
 
     model_config = ConfigDict(from_attributes=True)
 
-# Mini familymember details to make the class EventDetail output clearer
+
 class FamilyMemberMiniDetails(BaseModel):
+    """Minimum details of family members (ID and name) displayed in the event data."""
     id: int
     name: str
 
     model_config = ConfigDict(from_attributes=True)
 
-#Output for get request
 class EventDetail(BaseModel):
+    """Details of a event including the family members linked to the event."""
+
     id: int
     title: str
     date_time: datetime
@@ -44,13 +52,13 @@ class EventDetail(BaseModel):
 
     model_config = ConfigDict(from_attributes=True)
 
-#Update Outpute
-class EventUpdate(BaseModel):
 
+class EventUpdate(BaseModel):
+    """Confirmation message returned after event has been updated."""
     message: str
 
 # Output for Delete
 class EventDelete(BaseModel):
-
+    """Confirmation message returned after event has been deleted."""
     message: str
 

@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 from fastapi import HTTPException, Depends, APIRouter
-from schemas.schema_doctor import DoctorCreate, DoctorOut, DoctorDetail, AllDoctorsOut, DoctorUpdate, DoctorDelete
+from schemas.schema_doctor import DoctorCreate, DoctorOut, DoctorDetail, AllDoctorsOut, DoctorUpdateOut, DoctorDeleteOut
 from models.models import User
 from data.database import get_db
 from auth.auth_users import get_current_user
@@ -42,7 +42,7 @@ def read_doctors(current_user: User = Depends(get_current_user), db: Session = D
     doctors = service.get_doctors(current_user)
     return doctors
 
-@router.put("/doctor/{doctor_id}", response_model=DoctorUpdate)
+@router.put("/doctor/{doctor_id}", response_model=DoctorUpdateOut)
 def update_doctor(doctor_id: int, doctor: DoctorCreate, current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
     """Update the details of the doctor with the given ID
 
@@ -54,9 +54,9 @@ def update_doctor(doctor_id: int, doctor: DoctorCreate, current_user: User = Dep
 
     if message:
         raise HTTPException(status_code=status_code, detail=message)
-    return DoctorUpdate(message=f"Details change of Doctor {doctor.name} was successfull")
+    return DoctorUpdateOut(message=f"Details change of Doctor {doctor.name} was successfull")
 
-@router.delete("/doctor/{doctor_id}", response_model=DoctorDelete)
+@router.delete("/doctor/{doctor_id}", response_model=DoctorDeleteOut)
 def delete_doctor(doctor_id: int, current_user: User = Depends(get_current_user),db: Session = Depends(get_db)):
     """Delete the doctor with the given ID
     Returns 404 if doctor not found"""
@@ -67,6 +67,6 @@ def delete_doctor(doctor_id: int, current_user: User = Depends(get_current_user)
     if message:
         raise HTTPException(status_code=404, detail=message)
 
-    return DoctorDelete(message=f"{doctor} is no longer in your list")
+    return DoctorDeleteOut(message=f"{doctor} is no longer in your list")
 
 

@@ -6,11 +6,19 @@ from repositories.user_repository import IUserRepository
 password_hash = PasswordHash.recommended()
 
 class UserService:
+    """Business logic for user.
+    Works with any repository that implements IUserRepository,
+    so the database access can be exchanged without changing the service."""
 
     def __init__(self, repository: IUserRepository):
+        """Initialize the service with the repository used for user data access."""
         self.repository = repository
 
     def add_new_user(self, user_data: UserCreate):
+        """Create user.
+
+        Return (None, new_user) on success.
+        Return (message, None) if email already exist"""
 
         existing = self.repository.get_by_email(email=user_data.email)
 
@@ -29,6 +37,11 @@ class UserService:
         return None, new_user
 
     def authenticate_user(self, user_login: UserLogin):
+        """Authenticate user by login.
+
+        Return (None, user) on success.
+        Return (message, None) if email not correct
+        Return (message, None) if password not correct"""
 
         user = self.repository.get_by_email(email=user_login.email)
 
@@ -43,6 +56,11 @@ class UserService:
         return None, user
 
     def details_change(self, update_user_details: UserUpdate, current_user: User):
+        """Update the current user details (email, name, password).
+
+        Return (None, None, current_user) on success
+        If the old password not correct, return (401, message, None).
+        Return (409, message, None) if email already exist"""
 
         password_correct = password_hash.verify(update_user_details.old_password, current_user.hashed_password)
         if not password_correct:
@@ -61,14 +79,17 @@ class UserService:
         return None, None, current_user
 
     def delete_user(self, user_password: UserDelete, current_user: User):
+        """Delete current user.
+        Return (None, user_name) on success
+        If the password not correct, return (message, None)."""
 
         password_correct = password_hash.verify(user_password.password , current_user.hashed_password)
         if not password_correct:
             return "Password is not correct, cannot delete", None
 
-        delete_name = current_user.user_name
+        user_name = current_user.user_name
 
         self.repository.delete_user(current_user)
         self.repository.commit()
 
-        return None, delete_name
+        return None, user_name
