@@ -5,8 +5,9 @@ from typing import Literal, Optional
 class FamilyMemberCreate(BaseModel):
     """Required details for creating a new familymember.
 
-    The title and weight -> restricted to 0-250 field must not be empty.
-    The birthday must be later than today's date
+    The name field must not be empty
+    The weight restricted to 0-250 field and must not be empty.
+    birthday must not be in the future.
     The height field is optional, the default value is None and it is restricted to 0–300.
     The type can only be child, adult or pet
     The allergies and clothing size are optional and has default None
@@ -53,10 +54,10 @@ class FamilyMemberDetail(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
 
-class FamilyMemberUpdate(BaseModel):
+class FamilyMemberUpdateOut(BaseModel):
     """Confirmation message returned after a familymember has been updated."""
     message: str
 
-class FamilyMemberDelete(BaseModel):
+class FamilyMemberDeleteOut(BaseModel):
     """Confirmation message returned after a familymember has been deleted."""
     message: str

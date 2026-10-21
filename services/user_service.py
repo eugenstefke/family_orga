@@ -18,7 +18,7 @@ class UserService:
         """Create user.
 
         Return (None, new_user) on success.
-        Return (message, None) if email already exist"""
+        Return (message, None) if email already exists"""
 
         existing = self.repository.get_by_email(email=user_data.email)
 
@@ -55,25 +55,25 @@ class UserService:
 
         return None, user
 
-    def details_change(self, update_user_details: UserUpdate, current_user: User):
+    def details_change(self, user_details: UserUpdate, current_user: User):
         """Update the current user details (email, name, password).
 
         Return (None, None, current_user) on success
         If the old password not correct, return (401, message, None).
-        Return (409, message, None) if email already exist"""
+        Return (409, message, None) if email already exists"""
 
-        password_correct = password_hash.verify(update_user_details.old_password, current_user.hashed_password)
+        password_correct = password_hash.verify(user_details.old_password, current_user.hashed_password)
         if not password_correct:
             return 401, "Old Password is not correct", None
 
-        existing = self.repository.get_by_email(email=update_user_details.email)
+        existing = self.repository.get_by_email(email=user_details.email)
 
         if existing and existing.id != current_user.id:
             return 409, "This email address is already in use", None
 
-        current_user.user_name=update_user_details.name
-        current_user.email=update_user_details.email
-        current_user.hashed_password=password_hash.hash(update_user_details.password)
+        current_user.user_name=user_details.name
+        current_user.email=user_details.email
+        current_user.hashed_password=password_hash.hash(user_details.password)
 
         self.repository.commit()
         return None, None, current_user

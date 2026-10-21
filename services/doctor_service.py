@@ -103,7 +103,7 @@ class DoctorService:
 
         delete_name = doctor_to_delete.name # keep the name for the response, the doctor is deleted afterwards
 
-        self.repository.delete_doctor(owner_id=current_user.id, doctor_id=doctor_id)
+        self.repository.delete_doctor(doctor_to_delete)
         self.repository.commit()
 
         return None, delete_name

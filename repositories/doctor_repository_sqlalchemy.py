@@ -22,7 +22,7 @@ class DoctorRepositorySqlalchemy(IDoctorRepository):
         self.db.flush()
 
     def validation(self, doctor_details, current_user):
-        """Returns those of the requested family members that belong to the current user"""
+        """Return those of the requested family members that belong to the current user"""
         return self.db.query(FamilyMember).filter(FamilyMember.id.in_(doctor_details.familymember_id), FamilyMember.owner_id == current_user.id).all()
 
     def commit(self):
@@ -30,16 +30,16 @@ class DoctorRepositorySqlalchemy(IDoctorRepository):
         self.db.commit()
 
     def get_by_id(self, owner_id, doctor_id):
-        """Returns a doctor based on their ID and the owner ID"""
+        """Return a doctor based on their ID and the owner ID"""
         return self.db.query(Doctor).filter_by(owner_id=owner_id, id=doctor_id).first()
 
     def get_all(self, owner_id):
         """Return all doctors that belong to the given owner."""
         return self.db.query(Doctor).filter_by(owner_id=owner_id).all()
 
-    def delete_doctor(self, owner_id, doctor_id):
-        """Deletes a doctor using their ID and the owner ID """
-        self.db.query(Doctor).filter_by(owner_id=owner_id, id=doctor_id).delete()
+    def delete_doctor(self, doctor):
+        """Delete a doctor using their ID and the owner ID """
+        self.db.delete(doctor)
 
     def delete_linking(self, doctor_id):
         """Delete all link entries of the given doctor"""

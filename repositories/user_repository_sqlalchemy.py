@@ -11,7 +11,7 @@ class UserRepositorySqlalchemy(IUserRepository):
         self.db = session
 
     def get_by_email(self, email):
-        """Returns user based on their email"""
+        """Return user based on their email"""
         return self.db.query(User).filter_by(email=email).first()
 
     def add_user(self, new_user):
@@ -23,5 +23,5 @@ class UserRepositorySqlalchemy(IUserRepository):
         self.db.commit()
 
     def delete_user(self, user):
-        """Deletes a user"""
+        """Delete a user"""
         self.db.delete(user)

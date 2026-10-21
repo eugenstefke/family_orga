@@ -32,7 +32,7 @@ class FamilyMemberService:
         """Create familymember for the given user.
 
         Return (None, new_familymember) on success.
-        Return (message, None) if familymember already exist"""
+        Return (message, None) if familymember already exists"""
 
         existing = self.repository.familymember_existing(familymember_name=familymember.name, familymember_birthday=familymember.birthday, owner_id=current_user.id)
 
@@ -55,28 +55,34 @@ class FamilyMemberService:
         self.repository.commit()
         return None, new_familymember
 
-    def update_familymember_details(self, familymember_id: int, current_user: User, familymember_update: FamilyMemberCreate):
+    def update_familymember_details(self, familymember_id: int, current_user: User, familymember_details: FamilyMemberCreate):
         """Update the familymember with the given ID and user.
 
-        Return (None, familymember) on success
-        If the familymember not found, return (“familymember not found”, None)."""
+        Return (None, None, familymember) on success
+        Return (404, message, None) if the familymember does not exist.
+        Return (409, message, None) if another familymember of the user already has the same name and birthday. """
 
         familymember = self.repository.get_by_id(owner_id=current_user.id, familymember_id=familymember_id)
 
         if not familymember:
-            return "Familymember not found", None
+            return 404, "Familymember not found", None
 
-        familymember.name = familymember_update.name
-        familymember.birthday = familymember_update.birthday
-        familymember.height = familymember_update.height
-        familymember.weight = familymember_update.weight
-        familymember.type = familymember_update.type
-        familymember.allergies = familymember_update.allergies
-        familymember.clothing_size = familymember_update.clothing_size
-        familymember.shoe_size = familymember_update.shoe_size
+        existing = self.repository.familymember_existing(familymember_name=familymember_details.name, familymember_birthday=familymember_details.birthday, owner_id=current_user.id)
+
+        if existing and existing.id != familymember.id:
+            return 409, "Two familymembers can not have the same name and birthday", None
+
+        familymember.name = familymember_details.name
+        familymember.birthday = familymember_details.birthday
+        familymember.height = familymember_details.height
+        familymember.weight = familymember_details.weight
+        familymember.type = familymember_details.type
+        familymember.allergies = familymember_details.allergies
+        familymember.clothing_size = familymember_details.clothing_size
+        familymember.shoe_size = familymember_details.shoe_size
 
         self.repository.commit()
-        return None, familymember
+        return None, None, familymember
 
     def delete_familymember(self, familymember_id: int, current_user: User):
         """Delete familymember with the given familymember id and user.

@@ -32,7 +32,7 @@ class IDoctorRepository(ABC):
         pass
 
     @abstractmethod
-    def delete_doctor(self, owner_id, doctor_id):
+    def delete_doctor(self, doctor):
         pass
 
     @abstractmethod

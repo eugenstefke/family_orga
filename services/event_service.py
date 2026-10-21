@@ -85,7 +85,7 @@ class EventService:
         event.location = event_details.location
         event.category = event_details.category
 
-        self.repository.delete_linking(event_id=event_id)  # alte Zuordnungen entfernen
+        self.repository.delete_linking(event_id=event_id)  # remove old assignments
         for familymember_id in set(event_details.familymember_id):
             self.repository.add_linking(familymember_id=familymember_id, event_id=event_id)
 
@@ -95,7 +95,7 @@ class EventService:
     def delete_event(self, event_id: int, current_user: User):
         """Delete event with the given event id and user.
         Return (None, event_title) on success
-        If the doctor not found, return (“Event not found”, None)."""
+        If the event not found, return (“Event not found”, None)."""
 
         event_to_delete = self.repository.get_by_id(owner_id=current_user.id, event_id=event_id)
 

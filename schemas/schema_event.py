@@ -7,18 +7,18 @@ class EventCreate(BaseModel):
 
     The title field must not be empty.
     The date time must be in the format YYYY-MM-DDTHH:MM
-    location has the default value: ‘No location was specified’
+    location has the default value: No location was specified
     category is optional
     familymember_id lists the family members attending the event"""
 
     title: str = Field(min_length=1)
-    date_time: datetime = Field(examples=["JJJJ-MM-DDTHH:MM"])
+    date_time: datetime = Field(examples=["2030-01-01T18:00"])
     location: str = "No location was specified"
     category: Optional[str] = None
     familymember_id: list[int]
 
 class EventOut(BaseModel):
-    """Confirmation message returned after creat event."""
+    """Confirmation message returned after create event."""
     message: str
 
 
@@ -41,7 +41,7 @@ class FamilyMemberMiniDetails(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
 class EventDetail(BaseModel):
-    """Details of a event including the family members linked to the event."""
+    """Details of an event including the family members linked to the event."""
 
     id: int
     title: str
@@ -53,12 +53,12 @@ class EventDetail(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
 
-class EventUpdate(BaseModel):
+class EventUpdateOut(BaseModel):
     """Confirmation message returned after event has been updated."""
     message: str
 
 # Output for Delete
-class EventDelete(BaseModel):
+class EventDeleteOut(BaseModel):
     """Confirmation message returned after event has been deleted."""
     message: str
 
